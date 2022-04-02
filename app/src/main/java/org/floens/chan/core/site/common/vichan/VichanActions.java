@@ -19,6 +19,8 @@ package org.floens.chan.core.site.common.vichan;
 
 import static android.text.TextUtils.isEmpty;
 
+import org.floens.chan.core.model.orm.Board;
+import org.floens.chan.core.site.Boards;
 import org.floens.chan.core.site.SiteAuthentication;
 import org.floens.chan.core.site.common.CommonSite;
 import org.floens.chan.core.site.common.MultipartHttpCall;
@@ -26,8 +28,14 @@ import org.floens.chan.core.site.http.DeleteRequest;
 import org.floens.chan.core.site.http.DeleteResponse;
 import org.floens.chan.core.site.http.Reply;
 import org.floens.chan.core.site.http.ReplyResponse;
+import org.floens.chan.core.site.sites.chan4.Chan4;
+import org.floens.chan.core.site.sites.chan4.Chan4BoardsRequest;
+import org.floens.chan.utils.Logger;
 import org.jsoup.Jsoup;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

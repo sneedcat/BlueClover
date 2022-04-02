@@ -38,6 +38,13 @@ public class VichanEndpoints extends CommonSite.CommonEndpoints {
     }
 
     @Override
+    public HttpUrl boards() {
+        return root.builder()
+                .s("boards.json")
+                .url();
+    }
+
+    @Override
     public HttpUrl catalog(Board board) {
         return root.builder().s(board.code).s("catalog.json").url();
     }

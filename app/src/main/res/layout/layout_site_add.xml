@@ -41,7 +41,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:id="@+id/url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/setup_sites_url"
             android:inputType="textUri" />
 
     </com.google.android.material.textfield.TextInputLayout>
