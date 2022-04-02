@@ -1,0 +1,168 @@
+apply plugin: 'com.android.application'
+
+// Code style
+apply plugin: 'checkstyle'
+task('checkstyle', type: Checkstyle) {
+    configFile rootProject.file('checkstyle.xml')
+    source 'src/main/java'
+    ignoreFailures false
+    showViolations true
+    include '**/*.java'
+    classpath = files()
+}
+
+def getCommitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short=8', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+
+afterEvaluate {
+    tasks.findByName('check').dependsOn('checkstyle')
+}
+
+android {
+    compileSdkVersion 29
+    // update the travis config when changing this
+    buildToolsVersion '30.0.3'
+
+    defaultConfig {
+        applicationId "bluehorse.clover"
+        minSdkVersion 17
+        targetSdkVersion 29
+
+        versionName "v3.20"
+        // of the format XXYYZZ, where XX is major, YY is minor, ZZ is patch
+        // (watch out for octal notation, never start with a 0)
+        versionCode 32000
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    def hash = getCommitHash()
+    def user_agent = "Kuroba-dev/v4.13.6-1d48096"
+
+    /*
+    If you want to sign releases, make a file in app/keys.properties with the following content:
+    keystoreFile=yourkey.store
+    keystorePass=pass
+    keyAlias=alias
+    keyPass=pass
+    */
+
+    File f = file('keys.properties')
+    boolean doSign = f.exists()
+
+    if (doSign) {
+        Properties props = new Properties()
+        InputStream is = new FileInputStream(f)
+        props.load(is)
+
+        signingConfigs {
+            release {
+                storeFile file(props['keystoreFile'])
+                storePassword props['keystorePass']
+                keyAlias props['keyAlias']
+                keyPassword props['keyPass']
+            }
+        }
+
+        is.close()
+    }
+
+    defaultPublishConfig "default"
+    flavorDimensions "default"
+    productFlavors {
+        // The app name refers to the name as displayed on the launcher.
+        "default" {
+            dimension "default"
+            resValue "string", "app_name", "Blue Clover"
+            resValue "string", "app_flavor_name", "(build)"
+            buildConfigField "String", "BUILD_HASH", "\"$hash\""
+            buildConfigField "String", "USER_AGENT", "\"$user_agent\""
+        }
+
+        dev {
+            dimension "default"
+            resValue "string", "app_name", "Blue Clover"
+            resValue "string", "app_flavor_name", "(build $hash-dev)"
+            buildConfigField "String", "BUILD_HASH", "\"$hash\""
+            buildConfigField "String", "USER_AGENT", "\"$user_agent\""
+        }
+    }
+
+    buildTypes {
+        release {
+            if (doSign) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
+            buildConfigField "boolean", "DEVELOPER_MODE", "false"
+        }
+
+        debug {
+//            minifyEnabled true
+//            proguardFiles 'proguard.cfg'
+            buildConfigField "boolean", "DEVELOPER_MODE", "true"
+        }
+    }
+
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == "release") {
+            variant.outputs.all {
+                if (variant.flavorName == "default") {
+                    outputFileName = new File("BlueClover-" + hash + ".apk")
+                } else {
+                    outputFileName = new File("BlueClover-" + hash + "-" + variant.flavorName + ".apk")
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.exifinterface:exifinterface:1.2.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.browser:browser:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.7'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.7'
+
+    implementation 'com.android.volley:volley:1.1.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.13'
+    implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps:3.12.13'
+    //noinspection GradleDependency
+    implementation 'com.j256.ormlite:ormlite-core:4.48'
+    //noinspection GradleDependency
+    implementation 'com.j256.ormlite:ormlite-android:4.48'
+    implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.20'
+    implementation 'com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0'
+    //noinspection GradleDependency
+    implementation 'de.greenrobot:eventbus:2.4.0'
+    implementation 'org.nibor.autolink:autolink:0.9.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'me.xdrop:fuzzywuzzy:1.3.1'
+    implementation 'org.codejargon.feather:feather:1.0'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.27.0'
+}

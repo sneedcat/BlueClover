@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+Clover - 4chan browser https://github.com/Floens/Clover/
+Copyright (C) 2014  Floens
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.floens.chan"
+    android:installLocation="auto">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission
+        android:name="android.permission.WAKE_LOCK"
+        tools:node="replace" />
+
+    <application
+        android:name=".ChanApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Chan.Theme">
+
+        <!--Dual Window support for Samsung and LG-->
+        <meta-data
+            android:name="com.lge.support.SPLIT_WINDOW"
+            android:value="true" />
+        <uses-library
+            android:name="com.sec.android.app.multiwindow"
+            android:required="false" />
+
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
+            android:value="632.0dip" />
+        <meta-data
+            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
+            android:value="598.0dip" />
+
+        <activity
+            android:name=".ui.activity.BoardActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
+            android:label="@string/app_name">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="4chan.org" />
+                <data android:host="www.4chan.org" />
+                <data android:host="boards.4chan.org" />
+                <data android:host="www.4channel.org" />
+                <data android:host="boards.4channel.org" />
+                <data android:host="8ch.net" />
+            </intent-filter>
+
+        </activity>
+
+        <service
+            android:name=".ui.service.SavingNotification"
+            android:exported="false" />
+
+        <receiver
+            android:name=".core.receiver.WatchUpdateReceiver"
+            android:exported="false">
+
+            <intent-filter>
+                <action android:name="${applicationId}.intent.action.WATCHER_UPDATE" />
+            </intent-filter>
+
+        </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+
+        </provider>
+
+    </application>
+
+</manifest>

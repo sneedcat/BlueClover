@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- No need to update the changelog, we can't get it translated in time. -->
+    <string name="changelog_30002" translatable="false">
+        <![CDATA[
+            <h3>Blue Clover was updated</h3>
+            Blue Clover was updated to v3.20<br>
+            <br>
+            <b>New in this version:</b><br>
+            Clover is now <i>20% cooler</i>.
+        ]]>
+    </string>
+
+    <string-array name="extra_abouts">
+
+        <item>Find Blue Clover on GitHub</item>
+        <item>View the source code</item>
+        <item>https://github.com/nnuudev/BlueClover</item>
+
+        <item>Find the original Clover on GitHub</item>
+        <item>View the original source code</item>
+        <item>https://github.com/Floens/Clover</item>
+
+        <!-- <item>Donate to Clover development</item>
+        <item>Give a PayPal or Bitcoin donation to the Clover developer</item>
+        <item>https://floens.github.io/Clover/#donate</item> -->
+        <!-- <item>Send feedback</item>
+        <item>Email developer for feedback and questions</item>
+        <item>florens@airmail.cc__EMAIL__Clover feedback __VERSION__</item> -->
+    </string-array>
+</resources>

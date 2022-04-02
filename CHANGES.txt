@@ -1,0 +1,5 @@
+New in v3.20 build 20220401_1690
+- Removed update "feature"
+- Removed weird degeneracy and mlp oriented "features"
+- Removed pony gif
+- Removed git history to reduce the size of the repository, if you want to check it go to Clover repo or BlueClover repo
