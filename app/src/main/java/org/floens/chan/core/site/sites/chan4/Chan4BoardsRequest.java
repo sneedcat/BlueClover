@@ -32,9 +32,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class Chan4BoardsRequest extends JsonReaderRequest<List<Board>> {
-    public static List<String> BLOCKED = Collections.singletonList(
-            "f"
-    );
 
     private final Site site;
 
@@ -180,9 +177,6 @@ public class Chan4BoardsRequest extends JsonReaderRequest<List<Board>> {
             return null;
         }
 
-        if (BLOCKED.contains(board.code)) {
-            return null;
-        }
         return board;
     }
 }

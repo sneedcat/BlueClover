@@ -17,11 +17,14 @@
  */
 package org.floens.chan.core.site.sites.chan4;
 
+import android.net.Uri;
+import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 
 import androidx.annotation.Nullable;
 
+import org.floens.chan.R;
 import org.floens.chan.core.model.Post;
 import org.floens.chan.core.model.orm.Board;
 import org.floens.chan.core.model.orm.Loadable;
@@ -47,6 +50,7 @@ import org.floens.chan.core.site.parser.ChanReader;
 import org.floens.chan.core.site.parser.CommentParser;
 import org.floens.chan.utils.Logger;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -183,6 +187,11 @@ public class Chan4 extends SiteBase {
                 .host("boards.4chan.org")
                 .build();
 
+        private final HttpUrl swfthumb = new HttpUrl.Builder()
+                .scheme("https")
+                .host("www.abload.de")
+                .build();
+
         @Override
         public HttpUrl catalog(Board board) {
             return a.newBuilder()
@@ -223,10 +232,20 @@ public class Chan4 extends SiteBase {
                 }
                 return image.build();
             } else {
-                return t.newBuilder()
-                        .addPathSegment(post.board.code)
-                        .addPathSegment(arg.get("tim") + "s.jpg")
-                        .build();
+                switch(arg.get("ext")) {
+                    case "swf":
+                        return s.newBuilder()
+                                .addPathSegment("image")
+                                .addPathSegment("error")
+                                .addPathSegment("404")
+                                .addPathSegment("404-Anonymous-8.png")
+                                .build();
+                    default:
+                        return t.newBuilder()
+                                .addPathSegment(post.board.code)
+                                .addPathSegment(arg.get("tim") + "s.jpg")
+                                .build();
+                }
             }
         }
 
