@@ -1,94 +1,94 @@
- /*
-  * Clover - 4chan browser https://github.com/Floens/Clover/
-  * Copyright (C) 2014  Floens
-  *
-  * This program is free software: you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-  * the Free Software Foundation, either version 3 of the License, or
-  * (at your option) any later version.
-  *
-  * This program is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-  * You should have received a copy of the GNU General Public License
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- package org.floens.chan.core.site.sites.geechan;
+/*
+ * Clover - 4chan browser https://github.com/Floens/Clover/
+ * Copyright (C) 2014  Floens
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.floens.chan.core.site.sites.geechan;
 
- import android.util.JsonReader;
- import android.util.Log;
+import android.util.JsonReader;
+import android.util.Log;
 
- import com.android.volley.Response.ErrorListener;
- import com.android.volley.Response.Listener;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
 
- import org.floens.chan.core.model.orm.Board;
- import org.floens.chan.core.net.JsonReaderRequest;
- import org.floens.chan.core.site.Site;
- import org.floens.chan.utils.Logger;
+import org.floens.chan.core.model.orm.Board;
+import org.floens.chan.core.net.JsonReaderRequest;
+import org.floens.chan.core.site.Site;
+import org.floens.chan.utils.Logger;
 
- import java.io.IOException;
- import java.util.ArrayList;
- import java.util.List;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
- public class ChanGeeBoardsRequest extends JsonReaderRequest<List<Board>> {
-     private final Site site;
+public class ChanGeeBoardsRequest extends JsonReaderRequest<List<Board>> {
+    private final Site site;
 
-     ChanGeeBoardsRequest(Site site, Listener<List<Board>> listener, ErrorListener errorListener) {
-         super(site.endpoints().boards().toString(), listener, errorListener);
-         this.site = site;
-     }
+    ChanGeeBoardsRequest(Site site, Listener<List<Board>> listener, ErrorListener errorListener) {
+        super(site.endpoints().boards().toString(), listener, errorListener);
+        this.site = site;
+    }
 
-     @Override
-     public List<Board> readJson(JsonReader reader) throws Exception {
-         List<Board> list = new ArrayList<>();
+    @Override
+    public List<Board> readJson(JsonReader reader) throws Exception {
+        List<Board> list = new ArrayList<>();
 
-         reader.beginArray();
-         while (reader.hasNext()) {
-             while (reader.hasNext()) {
-                 Board board = readBoardEntry(reader);
-                 if (board != null) {
-                     list.add(board);
-                 }
-             }
-         }
-         reader.endArray();
+        reader.beginArray();
+        while (reader.hasNext()) {
+            while (reader.hasNext()) {
+                Board board = readBoardEntry(reader);
+                if (board != null) {
+                    list.add(board);
+                }
+            }
+        }
+        reader.endArray();
 
-         return list;
-     }
+        return list;
+    }
 
-     private Board readBoardEntry(JsonReader reader) throws IOException {
-         reader.beginObject();
+    private Board readBoardEntry(JsonReader reader) throws IOException {
+        reader.beginObject();
 
-         Board board = new Board();
-         board.siteId = site.id();
-         board.site = site;
+        Board board = new Board();
+        board.siteId = site.id();
+        board.site = site;
 
-         while (reader.hasNext()) {
-             String key = reader.nextName();
+        while (reader.hasNext()) {
+            String key = reader.nextName();
 
-             switch (key) {
-                 case "title":
-                     board.name = reader.nextString();
-                     break;
-                 case "board":
-                     board.code = reader.nextString();
-                     board.maxFileSize = 2048 * 1024;
-                     break;
-                 default:
-                     reader.skipValue();
-                     break;
-             }
-         }
+            switch (key) {
+                case "title":
+                    board.name = reader.nextString();
+                    break;
+                case "board":
+                    board.code = reader.nextString();
+                    board.maxFileSize = 2048 * 1024;
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
+            }
+        }
 
-         reader.endObject();
+        reader.endObject();
 
-         if (!board.finish()) {
-             // Invalid data, ignore
-             return null;
-         }
+        if (!board.finish()) {
+            // Invalid data, ignore
+            return null;
+        }
 
-         return board;
-     }
- }
+        return board;
+    }
+}
