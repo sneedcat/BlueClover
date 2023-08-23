@@ -61,8 +61,7 @@ public class TinyIBApi extends CommonSite.CommonApi {
                 reader.skipValue();
             }
         }
-
-        reader.endObject();
+            reader.endObject();
     }
 
     @Override
@@ -86,7 +85,8 @@ public class TinyIBApi extends CommonSite.CommonApi {
         String thumbnailpath = null;
         String originalName = null;
 
-        /* prevent API parse error
+           /* prevent API parse error
+
            resto is not available on opening board overview the first time
            so, we manually set the opId to 0, builder.op to true and builder.opId to 0 */
         int opId = 0;
@@ -183,9 +183,16 @@ public class TinyIBApi extends CommonSite.CommonApi {
 
         // The file from between the other values.
         if (file != null && file.length() > 0) {
-            fileName = file.substring(0, file.lastIndexOf("."));
-            fileExt = file.substring(file.lastIndexOf(".") + 1);
-            Map<String, String> args = makeArgument("path", file,
+                if (file.contains("<iframe")) {
+                fileName = originalName;
+                fileExt = "YT";
+                path = file;
+            } else {
+                fileName = file.substring(0, file.lastIndexOf("."));
+                fileExt = file.substring(file.lastIndexOf(".") + 1);
+                path = file;
+			}
+            Map<String, String> args = makeArgument("path", path,
                     "thumbnailpath", thumbnail);
             PostImage image = new PostImage.Builder()
                     .originalName(org.jsoup.parser.Parser.unescapeEntities(fileName, false))
@@ -293,9 +300,16 @@ public class TinyIBApi extends CommonSite.CommonApi {
         reader.endObject();
 
         if (file != null && file.length() > 0) {
-            fileName = file.substring(0, file.lastIndexOf("."));
-            fileExt = file.substring(file.lastIndexOf(".") + 1);
-            Map<String, String> args = makeArgument("path", file,
+            if (file.contains("<iframe")) {
+                fileName = originalName;
+                fileExt = "YT";
+                path = file;
+            } else {
+                fileName = file.substring(0, file.lastIndexOf("."));
+                fileExt = file.substring(file.lastIndexOf(".") + 1);
+                path = file;
+			}
+            Map<String, String> args = makeArgument("path", path,
                     "thumbnailpath", thumbnail);
             return new PostImage.Builder()
                     .originalName(org.jsoup.parser.Parser.unescapeEntities(fileName, false))
